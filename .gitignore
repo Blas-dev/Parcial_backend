@@ -1,0 +1,3 @@
+/ms-*/vendor/
+/ms-*/composer.lock
+.env
