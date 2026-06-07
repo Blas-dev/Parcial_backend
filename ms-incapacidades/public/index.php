@@ -1,12 +1,27 @@
 <?php
 
+use Slim\Factory\AppFactory;
+
 require __DIR__ . '/../vendor/autoload.php';
 
-// Cargar variables de entorno
+// Inicializar variables de entorno
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
 $dotenv->load();
 
-// Cargar la configuración de la base de datos
+// Inicializar base de datos con Eloquent
 require __DIR__ . '/../app/Config/database.php';
 
-echo "Conexión a la base de datos configurada correctamente.";
+// Instanciar Slim Framework
+$app = AppFactory::create();
+
+// Middlewares requeridos para el procesamiento JSON y ruteo
+$app->addBodyParsingMiddleware();
+$app->addRoutingMiddleware();
+$app->addErrorMiddleware(true, true, true);
+
+// Inyectar listado de endpoints
+$routes = require __DIR__ . '/../app/Routes/routes.php';
+$routes($app);
+
+// Desplegar servicio
+$app->run();
