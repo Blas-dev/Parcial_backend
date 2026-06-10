@@ -13,10 +13,29 @@ $capsule->addConnection([
     'charset'   => 'utf8',
     'collation' => 'utf8_unicode_ci',
     'prefix'    => '',
-]);
+], 'default');
 
-// Hacer que la instancia de Capsule esté disponible globalmente
+$capsule->addConnection([
+    'driver'    => 'mysql',
+    'host'      => $_ENV['DB_HOST'],
+    'database'  => $_ENV['DB_INCAPACIDADES_DATABASE'],
+    'username'  => $_ENV['DB_USERNAME'],
+    'password'  => $_ENV['DB_PASSWORD'],
+    'charset'   => 'utf8',
+    'collation' => 'utf8_unicode_ci',
+    'prefix'    => '',
+], 'incapacidades');
+
+$capsule->addConnection([
+    'driver'    => 'mysql',
+    'host'      => $_ENV['DB_HOST'],
+    'database'  => $_ENV['DB_AUTH_DATABASE'],
+    'username'  => $_ENV['DB_USERNAME'],
+    'password'  => $_ENV['DB_PASSWORD'],
+    'charset'   => 'utf8',
+    'collation' => 'utf8_unicode_ci',
+    'prefix'    => '',
+], 'auth');
+
 $capsule->setAsGlobal();
-
-// Inicializar Eloquent
 $capsule->bootEloquent();
