@@ -140,3 +140,40 @@ php -S localhost:8084 -t public
 | ms-incapacidades  | 8083   |
 | ms-seguimiento    | 8084   |
 | Frontend          | 5500   |
+
+ARCHIVOS .env
+
+ms-auth
+
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=db_auth
+DB_USERNAME=root
+DB_PASSWORD=
+
+ms-empleados
+
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=db_empleados
+DB_USERNAME=root
+DB_PASSWORD=
+DB_AUTH_DATABASE=db_auth
+
+ms-incapacidades
+
+DB_HOST=127.0.0.1
+DB_DATABASE=db_incapacidades
+DB_USERNAME=root
+DB_PASSWORD=
+DB_EMPLEADOS_DATABASE=db_empleados
+DB_AUTH_DATABASE=db_auth
+
+ms-seguimiento
+
+DB_HOST=127.0.0.1
+DB_DATABASE=db_seguimiento
+DB_USERNAME=root
+DB_PASSWORD=
+DB_INCAPACIDADES_DATABASE=db_incapacidades
+DB_AUTH_DATABASE=db_auth
