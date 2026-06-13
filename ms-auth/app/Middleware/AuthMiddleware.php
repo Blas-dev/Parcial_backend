@@ -5,7 +5,7 @@ namespace App\Middleware;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\Psr7\Response;
-use Illuminate\Database\Capsule\Manager as Capsule;
+use App\Models\Usuario;
 
 class AuthMiddleware {
     public function __invoke(Request $request, RequestHandler $handler): Response {
@@ -18,11 +18,10 @@ class AuthMiddleware {
             return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
         }
 
-        $usuario = Capsule::connection('auth')->table('usuarios')
-            ->where('token', $token)
-            ->where('sesion_activa', 1)
-            ->where('estado', 'activo')
-            ->first();
+        $usuario = Usuario::where('token', $token)
+                          ->where('sesion_activa', true)
+                          ->where('estado', 'activo')
+                          ->first();
 
         if (!$usuario) {
             $response = new Response();

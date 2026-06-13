@@ -1,29 +1,38 @@
 <?php
 
 use Slim\Factory\AppFactory;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-// Cargar variables de entorno
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
 $dotenv->load();
 
-// Cargar la configuración de la base de datos
 require __DIR__ . '/../app/Config/database.php';
 
-// Crear la instancia de la aplicación Slim
 $app = AppFactory::create();
 
-// Middleware para parsear el body de peticiones JSON
 $app->addBodyParsingMiddleware();
-
-// Middleware de enrutamiento y errores
 $app->addRoutingMiddleware();
+
+// Manejar preflight OPTIONS para CORS
+$app->options('/{routes:.+}', function (Request $request, Response $response) {
+    return $response;
+});
+
+// Middleware CORS global
+$app->add(function (Request $request, $handler) {
+    $response = $handler->handle($request);
+    return $response
+        ->withHeader('Access-Control-Allow-Origin', '*')
+        ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+        ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+});
+
 $app->addErrorMiddleware(true, true, true);
 
-// Registrar las rutas
 $routes = require __DIR__ . '/../app/Routes/routes.php';
 $routes($app);
 
-// Ejecutar la aplicación
 $app->run();

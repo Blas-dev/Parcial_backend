@@ -2,12 +2,12 @@
 
 use Slim\App;
 use App\Controllers\EmpleadoController;
+use App\Middleware\AuthMiddleware;
 
 return function (App $app) {
-    $app->get('/api/empleados', [EmpleadoController::class, 'listar']);
-    $app->get('/api/empleados/{id}', [EmpleadoController::class, 'obtener']);
-    $app->post('/api/empleados', [EmpleadoController::class, 'crear']);
-    $app->put('/api/empleados/{id}', [EmpleadoController::class, 'actualizar']);
-    $app->delete('/api/empleados/{id}', [EmpleadoController::class, 'eliminar']);
-    $app->get('/api/empleados/buscar/cedula/{cedula}', [EmpleadoController::class, 'buscarPorCedula']);
+    $app->get('/api/empleados',             [EmpleadoController::class, 'listar'])->add(AuthMiddleware::class);
+    $app->get('/api/empleados/{id}',        [EmpleadoController::class, 'obtener'])->add(AuthMiddleware::class);
+    $app->post('/api/empleados',            [EmpleadoController::class, 'crear'])->add(AuthMiddleware::class);
+    $app->put('/api/empleados/{id}',        [EmpleadoController::class, 'editar'])->add(AuthMiddleware::class);
+    $app->patch('/api/empleados/{id}/estado', [EmpleadoController::class, 'cambiarEstado'])->add(AuthMiddleware::class);
 };
