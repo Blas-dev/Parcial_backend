@@ -65,14 +65,28 @@ class IncapacidadController {
         }
 
         // Validar existencia del empleado en ms-empleados
-        $empleadoExists = Capsule::connection('empleados')->table('empleados')
-            ->where('id', $empleado_id)
-            ->where('estado', 'activo')
-            ->exists();
+        try {
+            $empleado = Capsule::connection('empleados')->table('empleados')
+                ->where('id', $empleado_id)
+                ->where('estado', 'activo')
+                ->first();
+        } catch (\Exception $e) {
+            $response->getBody()->write(json_encode(['error' => 'No se pudo verificar el empleado. Verifique que ms-empleados este activo.']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(503);
+        }
 
-        if (!$empleadoExists) {
+        if (!$empleado) {
             $response->getBody()->write(json_encode(['error' => 'El empleado especificado no existe o no esta activo']));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+        }
+
+        // Validar que la fecha de inicio no sea anterior a la fecha de ingreso del empleado
+        $fechaIngreso = DateTime::createFromFormat('Y-m-d', $empleado->fecha_ingreso);
+        if ($fechaIngreso && $dateInicio < $fechaIngreso) {
+            $response->getBody()->write(json_encode([
+                'error' => 'La fecha de inicio de la incapacidad no puede ser anterior a la fecha de ingreso del empleado (' . $empleado->fecha_ingreso . ')'
+            ]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
         // Validar cruce de fechas

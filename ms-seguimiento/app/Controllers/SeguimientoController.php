@@ -68,8 +68,20 @@ class SeguimientoController {
     public function consultarHistorial(Request $request, Response $response, $args) {
         $incapacidad_id = $args['incapacidad_id'];
 
-        // Retornar historial directamente; si la incapacidad no existe simplemente devuelve []
-        // Eliminamos la validacion cross-DB que podia causar errores de conexion en el GET
+        // Validar que la incapacidad exista
+        try {
+            $incapacidadExists = Capsule::connection('incapacidades')->table('incapacidades')
+                ->where('id', $incapacidad_id)->exists();
+        } catch (\Exception $e) {
+            $response->getBody()->write(json_encode(['error' => 'No se pudo verificar la incapacidad. Verifique que ms-incapacidades este activo.']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(503);
+        }
+
+        if (!$incapacidadExists) {
+            $response->getBody()->write(json_encode(['error' => 'La incapacidad especificada no existe']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+        }
+
         $historial = Seguimiento::where('incapacidad_id', $incapacidad_id)
             ->orderBy('fecha', 'asc')
             ->get();

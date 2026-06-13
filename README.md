@@ -46,3 +46,97 @@ php -S localhost:8083 -t public
 
 cd ms-seguimiento
 php -S localhost:8084 -t public
+
+
+
+# Proyecto Microservicios - Gestión de Incapacidades
+
+Instrucciones completas para configurar y ejecutar la aplicación en un equipo nuevo.
+
+## Requisitos Previos
+
+- XAMPP (PHP 8.0+ y MySQL)
+- Composer
+- Git
+- Visual Studio Code + extensión Live Server
+
+---
+
+## 1. Preparar las Bases de Datos
+
+1. Abre **XAMPP Control Panel** e inicia **Apache** y **MySQL**.
+2. Ingresa a `http://localhost/phpmyadmin`.
+3. Crea las siguientes **4 bases de datos** (una por una, clic en "Nueva"):
+
+| Base de datos      | Microservicio     |
+|--------------------|-------------------|
+| `db_auth`          | ms-auth           |
+| `db_empleados`     | ms-empleados      |
+| `db_incapacidades` | ms-incapacidades  |
+| `db_seguimiento`   | ms-seguimiento    |
+
+4. Por cada base de datos, seleccionala, ve a la pestaña **Importar** y sube el archivo `.sql` correspondiente de la carpeta `Docs/`.
+
+---
+
+## 2. Instalar Dependencias del Backend
+
+Abre **4 terminales de PowerShell** (o pestañas) dentro de la carpeta del proyecto y ejecuta en cada una:
+
+**Terminal 1 — ms-auth**
+```powershell
+cd ms-auth
+composer install
+php -S localhost:8081 -t public
+```
+
+**Terminal 2 — ms-empleados**
+```powershell
+cd ms-empleados
+composer install
+php -S localhost:8082 -t public
+```
+
+**Terminal 3 — ms-incapacidades**
+```powershell
+cd ms-incapacidades
+composer install
+php -S localhost:8083 -t public
+```
+
+**Terminal 4 — ms-seguimiento**
+```powershell
+cd ms-seguimiento
+composer install
+php -S localhost:8084 -t public
+```
+
+> Si `vendor/` ya existe en la carpeta, puedes omitir `composer install` y ejecutar directamente `php -S ...`
+
+---
+
+## 3. Abrir el Frontend
+
+1. Abre la carpeta **Parcial_Frontend** en Visual Studio Code.
+2. Haz clic derecho sobre `index.html` → **Open with Live Server**.
+3. La aplicación abre en `http://127.0.0.1:5500`.
+
+---
+
+## Credenciales por defecto
+
+| Usuario | Contraseña | Rol           |
+|---------|------------|---------------|
+| admin   | admin123   | administrador |
+
+---
+
+## Puertos del sistema
+
+| Microservicio     | Puerto |
+|-------------------|--------|
+| ms-auth           | 8081   |
+| ms-empleados      | 8082   |
+| ms-incapacidades  | 8083   |
+| ms-seguimiento    | 8084   |
+| Frontend          | 5500   |
